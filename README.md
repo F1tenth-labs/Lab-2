@@ -18,7 +18,7 @@ Then clone the repo into your workspace
 ```BASH
 git clone https://github.com/f1tenth/f1tenth_lab2_template.git
 ```
-The repo did not work exactly out of the box so there is some moving around we have to do before we can jump into it.
+The repo did not work exactly out of the box, so we have to do some moving around before we can start working on it.
 
 First, optionally, we can remove the .md files with 
 ```
@@ -30,7 +30,7 @@ We have to move the `safety_node.py` into the `~/sim_ws/src/f1tenth_lab2_templat
 mv ~/sim_ws/src/f1tenth_lab2_template/safety_node/scripts/safety_node.py ~/sim_ws/src/f1tenth_lab2_template/safety_node/safety_node/safety_node.py
 rm -f ~/sim_ws/src/f1tenth_lab2_template/safety_node/scripts/
 ```
-Remove unecessary c++ files
+Remove unnecessary C++ files
 ```BASH
 rm -rf ~/sim_ws/src/f1tenth_lab2_template/safety_node/src/
 rm -f ~/sim_ws/src/f1tenth_lab2_template/safety_node/CMakeLists.txt
@@ -66,7 +66,7 @@ Replace `<build_type>ament_cmake</build_type>` in the `<export>` tag with `<buil
 Optionally: update your maintainer, maintainer email, and description
 
 #### setup.py
-If you updated your maintainer and such, copy that information to this file aswell
+If you updated your maintainer and such, copy that information to this file as well
 
 ### C++ Only:
 Remove unnecessary python files
@@ -80,7 +80,7 @@ Now we have to create a header file
 mkdir -p ~/sim_ws/src/f1tenth_lab2_template/safety_node/include/safety_node
 touch ~/sim_ws/src/f1tenth_lab2_template/safety_node/include/safety_node/safety_node.hpp
 ```
-I wont show you how to make a header file for your c++ code, however you can just look in the repo and you can find it
+I won't show you how to make a header file for your C++ code, however, you can look in the repo and you can find it
 
 Now your package should look like this:
 ```
@@ -108,15 +108,15 @@ Optionally: update your maintainer, maintainer email, and description
 ### Both Python and C++:
 Move the `safety_node.py` into the `~/sim_ws/src/f1tenth_lab2_template/safety_node/safety_node` directory and delete the unused scripts directory
 
-(above in py)
+(above in Py)
 
 Create a resource directory
 
-(above in py)
+(above in Py)
 
 Create a header file
 
-(above in c++)
+(above in C++)
 
 
 Your tree should look similar to this
@@ -188,16 +188,16 @@ Inside of `entry_points`, replace `safety_node = safety_node.safety_node:main` w
 Optionally: update your maintainer, maintainer email, and description
 
 #### package.xml
-If you updated your maintainer and such, copy that information to this file aswell
+If you updated your maintainer and such, copy that information to this file as well
 
 We just changed the names of our executables so when we run our nodes we can choose to run either c++ or python
 
 ## Implement
-### Get the necessary prerequiste information
+### Get the necessary prerequisite information
 #### Learn about the topics
-We first want to know about the topics we are publishing to and subcribing from.
+We first want to know about the topics we publish and subscribe to.
 
-After **running the simulator in a seperate window** we can try listing all the topics.
+After **running the simulator in a separate window** we can try listing all the topics.
 ```BASH
 ○ → ros2 topic list
 /clicked_point
@@ -218,9 +218,9 @@ After **running the simulator in a seperate window** we can try listing all the 
 /tf
 /tf_static
 ```
-`/drive`, `/scan`, and `/ego_racecar/odom` are the topics we will be interacting with in todays lab.
+`/drive`, `/scan`, and `/ego_racecar/odom` are the topics we will be interacting with in today's lab.
 
-Lets get some more information on these topics:
+Let's get some more information on these topics:
 #### /drive
 ```BASH
 ○ → ros2 topic info /drive
@@ -228,9 +228,9 @@ Type: ackermann_msgs/msg/AckermannDriveStamped
 Publisher count: 0
 Subscription count: 1
 ```
-We will be publishing to this node, so its a good idea to understand what type of message we should be sending to this node. We can get more information on `ackermann_msgs/msg/AckermannDriveStamped` using the `ros2 interface show` command.
+We will be publishing to this node, so it's a good idea to understand what type of message we should be sending to this node. We can get more information on `ackermann_msgs/msg/AckermannDriveStamped` using the `ros2 interface show` command.
 
-NOTE: If you're wondering what is subcribed to this node, you can check yourself using `ros2 topic info /drive --verbose`
+NOTE: If you're wondering what is subscribed to this node, you can check yourself using `ros2 topic info /drive --verbose`
 ```BASH
 ○ → ros2 interface show ackermann_msgs/msg/AckermannDriveStamped
 ## Time stamped drive command for robots with Ackermann steering.
@@ -239,7 +239,7 @@ NOTE: If you're wondering what is subcribed to this node, you can check yourself
 std_msgs/Header header
 AckermannDrive  drive
 ```
-So this node has a field for an AckermannDrive message aswell. Lets use that command again to find information on `AckermannDrive`
+So this node has a field for an AckermannDrive message as well. Let's use that command again to find information on `AckermannDrive`
 ```BASH
 ○ → ros2 interface show ackermann_msgs/msg/AckermannDrive
 ## Driving command for a car-like vehicle using Ackermann steering.
@@ -256,7 +256,7 @@ float32 speed                   # desired forward speed (m/s)
 float32 acceleration            # desired acceleration (m/s^2)
 float32 jerk                    # desired jerk (m/s^3)
 ```
-Now we have a detailed view at all the fields of the `AckermannDrive` and `AckermannDriveStamped` messages, we are able to create our own when necessary.
+Now we have a detailed view of all the fields of the `AckermannDrive` and `AckermannDriveStamped` messages, we are able to create our own when necessary.
 
 We will be publishing to the `/drive` topic to set the `speed` to 0 in order to stop the car when we choose. As you can see, `speed` is a field in `AckermannDrive`. This means when we create an `AckermannDriveStamped` object in python, we can access the speed like so:
 ```PY
@@ -488,7 +488,7 @@ We want to get a `LaserScan` msg from the `/scan` topic and a `Odometery` msg fr
 ```
 
 #### Breaking
-When we are about to collide with the wall, we want to tell the car to break. We can do this by sending an `AckermannDriveStamped` message to `/drive` with 0 speed. We will also enter a steering angle of 0.0, which will align the wheels to be straight (this will not change the direction the car is facing).
+When we are about to collide with the wall, we want to tell the car to brake. We can do this by sending an `AckermannDriveStamped` message to `/drive` with 0 speed. We will also enter a steering angle of 0.0, which will align the wheels to be straight (this will not change the direction the car is facing).
 ```PY
 def publish_brake(self):
   # Set speed to 0 and align the wheels to be straight
@@ -510,7 +510,7 @@ def odom_callback(self, odom_msg):
 ```
 
 #### Understanding and extracting data from the LaserScan
-Inside of our `scan_callback` we want to get the LiDAR data and process it. We want to get the ranges from the LiDAR scanner so we can see how far our car is from any object. These values are stored in the array `ranges`. Lets first understand what this array means.
+Inside of our `scan_callback` we want to get the LiDAR data and process it. We want to get the ranges from the LiDAR scanner so we can see how far our car is from any object. These values are stored in the array `ranges`. Let's first understand what this array means.
 
 Each value in `ranges` corresponds to a specific angle from the sensor's origin, with the first value corresponding to the `angle_min` and the last value to `angle_max`.
 
@@ -573,7 +573,7 @@ Now we have an array with all the finite distances from the LiDAR and another ar
 #### Calculate the closing velocity
 We want to find how fast our car is moving towards a certain object. Given the cars speed and its angle to the object, we can use trig to calculate the closing velocity. Here is a diagram to demonstrate the premise.
 ```
-            ....../   <-- My bad drawing of a moving forward
+            ....../   <-- My bad drawing of a moving forward car
       ...../
  \.../  θ->|\
            | \
@@ -589,7 +589,7 @@ We want to find `v_closing`, which is the component of the velocity vector that 
 ```PY
 v_closing = self.speed * np.cos(angles)
 ```
-`self.speed` is in **m/s** so `v_closing` is aswell
+`self.speed` is in **m/s** so `v_closing` is as well
 #### Calculate the iTTC
 We know `speed = distance/time` which means `time = distance / speed`. We have our distances in our `ranges` array and our speeds in our `v_closing` array. Now we just need our time. `ranges` is in **meters** and `v_closing` is in **m/s**, so our result will be in **seconds** However, we want to remove any possible unneccesary data. In this case, negative `v_closing` is unncessary as we don't care about objects we are moving away from. In our implementation we will have the default value of our `ittc` array be `inf` as to represent that there is not imminent collision.
 ```PY
@@ -598,7 +598,7 @@ positive_closing = v_closing > 0
 ittc[positive_closing] = ranges[positive_closing] / v_closing[positive_closing]
 ittc = np.where(np.isfinite(ittc), ittc, np.inf)
 ```
-Breakdown:
+##### Breakdown:
 
 `np.full_like()` makes an np array the same shape (nxm) as `ranges` and sets all values to `np.inf`
 
@@ -621,7 +621,7 @@ collision_imminent = np.any(ittc < self.threshold_iTTC)
 ```
 If `collision_imminent` is `true`, then we have an object that our car will run into in `ittc (thats under our threshold)` time if nothing is done.
 
-Notice how I said, "if nothing is done". There is still time for the car to move out of the way, so we cant step on the breaks, otherwise we would be sending a false positive. We don't want to step on the breaks if we don't have to.
+Notice how I said, "if nothing is done". There is still time for the car to move out of the way, so we cant step on the brakes, otherwise we would be sending a false positive. We don't want to step on the brakes if we don't have to.
 
 #### Debounce
 A strategy we can implement is debouncing. If a collision is detected (`collision_imminent` is `true`), you increment a counter (`self.debounce_count`). The `debounce_count` tracks how many consecutive times the collision detection logic has reported an imminent collision. Only once `debounce_count` reaches a threshold (`self.debounce_threshold`) does the car trigger the emergency brake.
@@ -686,6 +686,6 @@ ros2 run safety_node safety_node --ros-args --log-level debug
 With our **second terminal** open we can use our keyboard as prompted to control the car. Running into a wall should send warning messages to your **third terminal** and eventually stop your car in place.
 
 ## Conclusion
-From the input data of the car's speed and surroundings we were able to implement an Emergency breaking system that works using debouncing to reduce false positives. Our `threshold_iTTC` and `debounce_threshold` can be changed to better optimize our breaking system in the future. Another potential problem with this breaking system is that it only works with head on collisions. If our car were to clip a corner while turning or to reverse into an object, our emergency breaking would not be able to detect the collision or stop it in time. This is due to the `ranges` coming from the position of the LiDAR sensor on the car. We would have to take into account the distance of the object to the closest point on the car instead of just the sensor in order to fix this issue. We can use the dimensions of the car and trig to account for this, however that is outside the scope of this lab.
+From the input data of the car's speed and surroundings we were able to implement an Emergency braking system that works using debouncing to reduce false positives. Our `threshold_iTTC` and `debounce_threshold` can be changed to better optimize our braking system in the future. Another potential problem with this braking system is that it only works with head on collisions. If our car were to clip a corner while turning or to reverse into an object, our emergency braking would not be able to detect the collision or stop it in time. This is due to the `ranges` coming from the position of the LiDAR sensor on the car. We would have to take into account the distance of the object to the closest point on the car instead of just the sensor in order to fix this issue. We can use the dimensions of the car and trig to account for this, however that is outside the scope of this lab.
 
 
