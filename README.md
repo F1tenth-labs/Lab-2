@@ -73,7 +73,8 @@ Type: ackermann_msgs/msg/AckermannDriveStamped
 Publisher count: 0
 Subscription count: 1
 ```
-We will be publishing to this node, so its a good idea to understand what type of message we should be sending to this node. We can get more information on `ackermann_msgs/msg/AckermannDriveStamped` using the `ros2 interface show`
+We will be publishing to this node, so its a good idea to understand what type of message we should be sending to this node. We can get more information on `ackermann_msgs/msg/AckermannDriveStamped` using the `ros2 interface show` command.
+NOTE: If you're wondering what is subcribed to this node, you can check yourself using `ros2 topic info /drive --verbose`
 ```BASH
 ○ → ros2 interface show ackermann_msgs/msg/AckermannDriveStamped
 ## Time stamped drive command for robots with Ackermann steering.
@@ -100,6 +101,105 @@ float32 acceleration            # desired acceleration (m/s^2)
 float32 jerk                    # desired jerk (m/s^3)
 ```
 Now we have a detailed view at all the fields of the `AckermannDrive` and `AckermannDriveStamped` messages, we are able to create our own when necessary.
+\
+\
+\
+Repeating this for the other topics will let us know what information we are recieving and sending from all of our topics
+
+### /scan
+```BASH
+○ → ros2 topic info /scan
+Type: sensor_msgs/msg/LaserScan
+Publisher count: 1
+Subscription count: 1
+```
+##### LaserScan
+```BASH
+○ → ros2 interface show sensor_msgs/msg/LaserScan
+# Single scan from a planar laser range-finder
+#
+# If you have another ranging device with different behavior (e.g. a sonar
+# array), please find or create a different message, since applications
+# will make fairly laser-specific assumptions about this data
+
+std_msgs/Header header # timestamp in the header is the acquisition time of
+                             # the first ray in the scan.
+                             #
+                             # in frame frame_id, angles are measured around
+                             # the positive Z axis (counterclockwise, if Z is up)
+                             # with zero angle being forward along the x axis
+
+float32 angle_min            # start angle of the scan [rad]
+float32 angle_max            # end angle of the scan [rad]
+float32 angle_increment      # angular distance between measurements [rad]
+
+float32 time_increment       # time between measurements [seconds] - if your scanner
+                             # is moving, this will be used in interpolating position
+                             # of 3d points
+float32 scan_time            # time between scans [seconds]
+
+float32 range_min            # minimum range value [m]
+float32 range_max            # maximum range value [m]
+
+float32[] ranges             # range data [m]
+                             # (Note: values < range_min or > range_max should be discarded)
+float32[] intensities        # intensity data [device-specific units].  If your
+                             # device does not provide intensities, please leave
+                             # the array empty.
+```
+
+### /ego_racecar/dom
+```BASH
+○ → ros2 topic info /ego_racecar/odom 
+Type: nav_msgs/msg/Odometry
+Publisher count: 1
+Subscription count: 0
+```
+##### Odometry
+```BASH
+○ → ros2 interface show nav_msgs/msg/Odometry
+# This represents an estimate of a position and velocity in free space.
+# The pose in this message should be specified in the coordinate frame given by header.frame_id
+# The twist in this message should be specified in the coordinate frame given by the child_frame_id
+
+# Includes the frame id of the pose parent.
+std_msgs/Header header
+
+# Frame id the pose points to. The twist is in this coordinate frame.
+string child_frame_id
+
+# Estimated pose that is typically relative to a fixed world frame.
+geometry_msgs/PoseWithCovariance pose
+
+# Estimated linear and angular velocity relative to child_frame_id.
+geometry_msgs/TwistWithCovariance twist
+```
+##### PoseWithCovariance
+```BASH
+○ → ros2 interface show geometry_msgs/msg/PoseWithCovariance
+# This represents a pose in free space with uncertainty.
+
+Pose pose
+
+# Row-major representation of the 6x6 covariance matrix
+# The orientation parameters use a fixed-axis representation.
+# In order, the parameters are:
+# (x, y, z, rotation about X axis, rotation about Y axis, rotation about Z axis)
+float64[36] covariance
+```
+##### TwistWithCovariance
+```BASH
+○ → ros2 interface show geometry_msgs/msg/TwistWithCovariance
+# This expresses velocity in free space with uncertainty.
+
+Twist twist
+
+# Row-major representation of the 6x6 covariance matrix
+# The orientation parameters use a fixed-axis representation.
+# In order, the parameters are:
+# (x, y, z, rotation about X axis, rotation about Y axis, rotation about Z axis)
+float64[36] covariance
+```
 
 ### Implement the node
 After we have the necessary information, we can begin to create our node.
